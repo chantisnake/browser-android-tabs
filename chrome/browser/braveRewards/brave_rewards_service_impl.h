@@ -45,10 +45,23 @@ public:
   // KeyedService:
   void Shutdown() override;
 
+  void Init();
   void CreateWallet() override;
-  void SaveVisit(const std::string& publisher,
+  void OnLoad(const std::string& _tld,
+            const std::string& _domain,
+            const std::string& _path,
+            uint32_t tab_id) override;
+  void OnUnload(uint32_t tab_id) override;
+  void OnShow(uint32_t tab_id) override;
+  void OnHide(uint32_t tab_id) override;
+  void OnForeground(uint32_t tab_id) override;
+  void OnBackground(uint32_t tab_id) override;
+  void OnMediaStart(uint32_t tab_id) override;
+  void OnMediaStop(uint32_t tab_id) override;
+  void OnXHRLoad(uint32_t tab_id, const std::string& url) override;
+  /*void SaveVisit(const std::string& publisher,
                  uint64_t duration,
-                 bool ignoreMinTime) override;
+                 bool ignoreMinTime) override;*/
   void SavePublisherInfo(std::unique_ptr<ledger::PublisherInfo> publisher_info,
                  ledger::PublisherInfoCallback callback) override;
   void LoadPublisherInfo(const ledger::PublisherInfo::id_type& publisher_id,
@@ -94,11 +107,11 @@ private:
                                  ledger::GetPublisherInfoListCallback callback,
                                  const ledger::PublisherInfoList& list);
 
-  void TriggerOnWalletCreated(int error_code);
+  void TriggerOnWalletInitialized(int error_code);
 
   // ledger::LedgerClient
   std::string GenerateGUID() const override;
-  void OnWalletCreated(ledger::Result result) override;
+  void OnWalletInitialized(ledger::Result result) override;
   void OnReconcileComplete(ledger::Result result,
                            const std::string& viewing_id) override;
   void LoadLedgerState(ledger::LedgerCallbackHandler* handler) override;
@@ -119,8 +132,18 @@ private:
   // URLFetcherDelegate impl
   void OnURLFetchComplete(const net::URLFetcher* source) override;
 
-  void OnWalletProperties(ledger::WalletInfo) override;
+  void OnWalletProperties(ledger::Result result,
+                          std::unique_ptr<ledger::WalletInfo> info) override;
   void GetWalletProperties() override;
+  void GetPromotion(const std::string& lang, const std::string& paymentId) override;
+  void GetPromotionCaptcha() override;
+  //void SolvePromotionCaptcha(const std::string& solution) const override;
+  //std::string GetWalletPassphrase() const override;
+  //void RecoverWallet(const std::string passPhrase) const override;
+  void OnPromotion(ledger::Promo result) override;
+  void OnPromotionCaptcha(const std::string& image) override;
+  void OnRecoverWallet(ledger::Result result, double balance) override;
+  void OnPromotionFinish(ledger::Result result, unsigned int statusCode, uint64_t expirationDate) override;
 
   Profile* profile_;  // NOT OWNED
   std::unique_ptr<ledger::Ledger> ledger_;
