@@ -48,8 +48,8 @@ public:
   void Init();
   void CreateWallet() override;
 
-  void MakePayment(const ledger::PaidData& paid_data) override;
-  void AddRecurrentPayment(const std::string& domain_name, const double& value) override;
+  void MakePayment(const ledger::PaymentData& paid_data) override;
+  void AddRecurringPayment(const std::string& domain, const double& value) override;
   void OnLoad(const std::string& _tld,
             const std::string& _domain,
             const std::string& _path,
@@ -84,7 +84,7 @@ public:
                           const std::string& month,
                           const std::string& year,
                           ledger::GetPublisherInfoListCallback callback) override;
-  void GetRecurrentDonationPublisherInfo(ledger::PublisherInfoCallback callback) override;
+  void GetRecurringDonationPublisherInfo(ledger::PublisherInfoCallback callback) override;
  
 
   void SetPublisherMinVisitTime(uint64_t duration_in_milliseconds) override;
@@ -97,7 +97,7 @@ public:
   unsigned int GetPublisherMinVisits() const override;
   bool GetPublisherAllowNonVerified() const override;
   double GetContributionAmount() const override;
-  void GetBalanceReport(ledger::BalanceReportInfo& report_info) const override;
+  bool GetBalanceReport(ledger::BalanceReportInfo* report_info) const override;
 
   std::string URIEncode(const std::string& value) override;
 
